@@ -20,7 +20,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());
+// app.use(cors());
 
 // App routes
 const baseApiUrl = "/api/v1";
