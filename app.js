@@ -13,14 +13,13 @@ mongoose.connect(
         else console.log("Connected to database...");
     }
 );
-console.log(process.env.DATABASE_URL)
 const app = express();
 
 // App middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
-// app.use(cors());
+app.use(cors());
 
 // App routes
 const baseApiUrl = "/api/v1";
