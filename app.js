@@ -4,6 +4,15 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv/config");
 
+// Database
+mongoose.connect(
+    process.env.DATABASE_URL,
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    () => {
+        console.log("Connected to database...");
+    }
+);
+
 const app = express();
 
 // App middleware
@@ -16,14 +25,6 @@ app.use(cors());
 const baseApiUrl = "/api/v1";
 app.use(baseApiUrl + "/posts", require("./routes/posts"));
 
-// Database
-mongoose.connect(
-    process.env.DATABASE_URL,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    () => {
-        console.log("Connected to database...");
-    }
-);
 
 // Listen port
 const PORT = process.env.PORT || 5000;

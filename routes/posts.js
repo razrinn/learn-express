@@ -28,6 +28,11 @@ router.get("/:postId", async (req, res) => {
     }
 });
 
+router.get("/test/:postId", async (req, res) => {
+    const postId = req.params.postId;
+    res.json({ postId });
+});
+
 /**
  * CREATE a Post
  */
