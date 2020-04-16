@@ -2,16 +2,17 @@ const express = require("express");
 const Post = require("../models/Post");
 
 const router = express.Router();
+const loginRequired = require("../middleware/loginRequired");
 
 /**
  * GET ALL Posts
  */
-router.get("/", async (req, res) => {
+router.get("/", loginRequired , async (req, res) => {
     try {
         const posts = await Post.find();
         res.json(posts);
     } catch (err) {
-        res.status(403).json(err);
+        res.status(400).json(err);
     }
 });
 
@@ -24,7 +25,7 @@ router.get("/:postId", async (req, res) => {
         const post = await Post.findById(postId);
         res.json(post);
     } catch (err) {
-        res.status(403).json(err);
+        res.status(400).json(err);
     }
 });
 
@@ -42,7 +43,7 @@ router.post("/", async (req, res) => {
         const post = await Post.create({ title, description });
         res.json(post);
     } catch (err) {
-        res.status(403).json(err);
+        res.status(400).json(err);
     }
 });
 
@@ -55,7 +56,7 @@ router.delete("/:postId", async (req, res) => {
         const removedPost = await Post.remove({ _id: postId });
         res.json(removedPost);
     } catch (err) {
-        res.status(403).json(err);
+        res.status(400).json(err);
     }
 });
 

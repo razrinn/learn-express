@@ -7,7 +7,7 @@ require("dotenv/config");
 // Database
 mongoose.connect(
     process.env.DATABASE_URL,
-    { useNewUrlParser: true, useUnifiedTopology: true },
+    { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
     (err) => {
         if (err) console.log("Unable to connect to database...", err);
         else console.log("Connected to database...");
@@ -23,6 +23,7 @@ app.use(cors());
 
 // App routes
 const baseApiUrl = "/api/v1";
+app.use(baseApiUrl + "/auth", require("./routes/auth"));
 app.use(baseApiUrl + "/posts", require("./routes/posts"));
 
 // Listen port
