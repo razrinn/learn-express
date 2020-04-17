@@ -2,7 +2,11 @@ const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
+
+const { errorCatcher, requestNotFound } = require("./middleware/errorHandler");
 require("dotenv/config");
+
+const app = express();
 
 // Database
 mongoose.connect(
@@ -13,7 +17,6 @@ mongoose.connect(
         else console.log("Connected to database...");
     }
 );
-const app = express();
 
 // App middleware
 app.use(express.urlencoded({ extended: true }));
@@ -23,8 +26,14 @@ app.use(cors());
 
 // App routes
 const baseApiUrl = "/api/v1";
-app.use(baseApiUrl + "/auth", require("./routes/auth"));
-app.use(baseApiUrl + "/posts", require("./routes/posts"));
+const authRoute = require("./routes/auth");
+const postsRoute = require("./routes/posts");
+app.use(baseApiUrl + "/auth", authRoute);
+app.use(baseApiUrl + "/posts", postsRoute);
+
+// Error middleware
+app.use(requestNotFound);
+app.use(errorCatcher);
 
 // Listen port
 const PORT = process.env.PORT || 5000;

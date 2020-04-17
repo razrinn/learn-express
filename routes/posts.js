@@ -3,45 +3,45 @@ const Post = require("../models/Post");
 
 const router = express.Router();
 const loginRequired = require("../middleware/loginRequired");
+const { generateResponse } = require("../utils/response");
+
 
 /**
  * GET ALL Posts
  */
-router.get("/", loginRequired , async (req, res) => {
+router.get("/", async (req, res, next) => {
     try {
         const posts = await Post.find();
-        res.json(posts);
+        res.json(generateResponse(true, "Data retrieved", posts));
     } catch (err) {
-        res.status(400).json(err);
+        return next({
+            message: err,
+            status: 500,
+        });
     }
 });
 
 /**
  * GET a Post
  */
-router.get("/:postId", async (req, res) => {
+router.get("/:postId", async (req, res, next) => {
     const postId = req.params.postId;
     try {
         const post = await Post.findById(postId);
-        res.json(post);
+        res.json(generateResponse(true, "Data retrieved", post || {}));
     } catch (err) {
-        res.status(400).json(err);
+        res.json(generateResponse(true, "No such data", {}))
     }
-});
-
-router.get("/test/:postId", async (req, res) => {
-    const postId = req.params.postId;
-    res.json({ postId });
 });
 
 /**
  * CREATE a Post
  */
-router.post("/", async (req, res) => {
+router.post("/", loginRequired ,async (req, res) => {
     const { title, description } = req.body;
     try {
         const post = await Post.create({ title, description });
-        res.json(post);
+        res.json(generateResponse(true, "Data successfully created"));
     } catch (err) {
         res.status(400).json(err);
     }
@@ -50,11 +50,11 @@ router.post("/", async (req, res) => {
 /**
  * DELETE a Post
  */
-router.delete("/:postId", async (req, res) => {
+router.delete("/:postId", loginRequired ,async (req, res) => {
     const postId = req.params.postId;
     try {
         const removedPost = await Post.remove({ _id: postId });
-        res.json(removedPost);
+        res.json(generateResponse(true, "Data successfully removed"));
     } catch (err) {
         res.status(400).json(err);
     }
@@ -63,7 +63,7 @@ router.delete("/:postId", async (req, res) => {
 /**
  * UPDATE a Post
  */
-router.patch("/:postId", async (req, res) => {
+router.patch("/:postId", loginRequired, async (req, res) => {
     const postId = req.params.postId;
     const newPostData = req.body;
     try {
@@ -73,7 +73,7 @@ router.patch("/:postId", async (req, res) => {
                 $set: newPostData,
             }
         );
-        res.json(updatedPost);
+        res.json(generateResponse(true, "Data successfully updated"));
     } catch (err) {}
 });
 
